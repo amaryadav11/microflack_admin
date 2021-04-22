@@ -13,7 +13,13 @@ exec su -c /tmp/setup-all-in-one.sh -l vagrant
 SCRIPT
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/xenial64"
+  if Vagrant.has_plugin?("vagrant-proxyconf")
+    config.proxy.http     = "http://10.194.10.21:3128/"
+    config.proxy.https    = "http://10.194.10.21:3128/"
+    config.proxy.no_proxy = "localhost,127.0.0.1"
+    config.proxy.enabled = { docker: true, apt: true, git: true }
+  end
+  config.vm.box = "ubuntu/hirsute64"
   config.vm.network "private_network", ip: "192.168.33.10"
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "1536"
